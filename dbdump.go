@@ -192,7 +192,7 @@ func dumpTable(w io.Writer, db dbQ, database, table, user string) error {
 	default:
 		return err
 	}
-	if cols, err := selectableColumns(db, database, table, user); err != nil {
+	if cols, err := selectableColumns(db, database, table); err != nil {
 		return err
 	} else if len(cols) > 0 {
 		for _, name := range cols {
@@ -252,14 +252,12 @@ doDump:
 	return out.Error()
 }
 
-// selectableColumns returns list of columns with "SELECT" privilege from
-// information_schema.column_privileges table for the given table/user.
-func selectableColumns(db dbQ, database, table, user string) ([]string, error) {
-	// BUG(artyom): For tables with subset of selectable columns they are
-	// dumped in a different order that was used to create table.
-	query := `select column_name from information_schema.column_privileges
-		where privilege_type="SELECT" and table_schema=? and table_name=? and INSTR(grantee, ?)=1`
-	rows, err := db.Query(query, database, table, "'"+user+"'")
+// selectableColumns returns list of readable columns for the given table as
+// read from the information_schema.columns table.
+func selectableColumns(db dbQ, database, table string) ([]string, error) {
+	query := `select column_name from information_schema.columns
+		where table_schema=? and table_name=? order by ordinal_position`
+	rows, err := db.Query(query, database, table)
 	if err != nil {
 		return nil, err
 	}
