@@ -5,9 +5,9 @@
 // the connected user; if only subset of table columns is readable, only these
 // readable columns are saved.
 //
-// By default program saves multiple tables over multiple connections (see -n
-// flag), if consistency between dumped tables are required, use -tx flag do
-// save them sequentially in a single transaction.
+// By default program concurrenlty reads multiple tables over multiple
+// connections (see -n flag), if consistency between dumped tables is required,
+// use -tx flag to save them sequentially in a single transaction.
 //
 // MySQL credentials (user and password) are read from the "client" section of
 // the .my.cnf file which is expected to have the following format:
@@ -16,10 +16,10 @@
 // 	user = username
 // 	password = password
 //
-// When running in concurrent mode, program returns when it processes all
-// tables, but only reports the first error it encounters. When running in
-// single transaction mode (-tx flag), program terminates on the first error
-// right away.
+// When running in concurrent mode, program returns when it processes all tables
+// but only reports the first error it encounters. When running in single
+// transaction mode (-tx flag), program terminates on the first error right
+// away.
 //
 // Only database, table and column names that can be used as unquoted MySQL
 // identifiers are supported — they are only allowed to contain characters from
