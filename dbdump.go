@@ -16,14 +16,16 @@
 // 	user = username
 // 	password = password
 //
-// When running in concurrent mode, program returns when it processes all tables
-// but only reports the first error it encounters. When running in single
+// When running in concurrent mode, program only returns when all tables are
+// processed reporting the first encountered error. When running in a single
 // transaction mode (-tx flag), program terminates on the first error right
 // away.
 //
 // Only database, table and column names that can be used as unquoted MySQL
 // identifiers are supported — they are only allowed to contain characters from
 // [A-Za-z0-9_] range.
+//
+// Null values are saved in CSV as NULL.
 package main
 
 import (
