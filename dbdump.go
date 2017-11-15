@@ -160,7 +160,7 @@ func dumpToFile(db dbQ, useGzip bool, database, table, user, file string) error 
 	var w io.Writer = f
 	var gw *gzip.Writer
 	if useGzip {
-		if gw, err = gzip.NewWriterLevel(f, gzip.HuffmanOnly); err != nil {
+		if gw, err = gzip.NewWriterLevel(f, gzip.BestSpeed); err != nil {
 			return err
 		}
 		w = gw
