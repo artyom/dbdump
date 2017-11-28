@@ -16,6 +16,12 @@
 // 	user = username
 // 	password = password
 //
+// If -tls flag is used, program connects to the server over TLS and expects
+// server certificate to be signed with certificate authority from the system CA
+// pool. On UNIX systems the environment variables SSL_CERT_FILE and
+// SSL_CERT_DIR can be used to override the system default locations for the SSL
+// certificate file and SSL certificate files directory, respectively.
+//
 // When running in concurrent mode, program only returns when all tables are
 // processed reporting the first encountered error. When running in a single
 // transaction mode (-tx flag), program terminates on the first error right
@@ -69,6 +75,7 @@ type runArgs struct {
 	Creds  string `flag:"mycnf,path to .my.cnf file to read user/password from"`
 	NoGzip bool   `flag:"nogzip,do not compress files"`
 	Tx     bool   `flag:"tx,dump all tables sequentially in a single transaction"`
+	TLS    bool   `flag:"tls,use TLS"`
 	N      int    `flag:"n,allow n tables to be dumped simultaneously"`
 }
 
@@ -90,8 +97,12 @@ func run(args *runArgs, tables ...string) error {
 	if err != nil {
 		return err
 	}
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", user, pass, args.Addr, args.DB)+
-		"?maxAllowedPacket=0&readTimeout=5m&writeTimeout=5m")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s", user, pass, args.Addr, args.DB) +
+		"?maxAllowedPacket=0&readTimeout=5m&writeTimeout=5m"
+	if args.TLS {
+		dsn += "&tls=true"
+	}
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
 	}

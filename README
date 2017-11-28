@@ -16,6 +16,12 @@ the .my.cnf file which is expected to have the following format:
     user = username
     password = password
 
+If -tls flag is used, program connects to the server over TLS and expects
+server certificate to be signed with certificate authority from the system
+CA pool. On UNIX systems the environment variables SSL_CERT_FILE and
+SSL_CERT_DIR can be used to override the system default locations for the
+SSL certificate file and SSL certificate files directory, respectively.
+
 When running in concurrent mode, program only returns when all tables are
 processed reporting the first encountered error. When running in a single
 transaction mode (-tx flag), program terminates on the first error right
